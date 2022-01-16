@@ -1,8 +1,8 @@
 class ArticlesController < ApplicationController
 
     def index
-        puts 'index'
-        render json: {}
+        @articles = Article.all
+        render json: @articles
     end
 
     def create
