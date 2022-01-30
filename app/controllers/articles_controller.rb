@@ -1,35 +1,38 @@
 class ArticlesController < ApplicationController
 
-    def index
-        limit = "あ"
-        page = 1
-        form = ArticleForm.new(limit,page)
-        #バリデーションはsave時に判定されるが、validは任意のタイミングでバリデーションを判定
-        # puts form.errors.messages
-        articles = Article.all
-        render json: {articles: articles,form: form}, status: :ok
+  def index
+    @articles = Article.all
+    render json: @articles
+  end
+
+  def create
+    article = Article.new({ title: params[:title], markdown: params[:markdown], public: params[:public] })
+    if article.save
+      params[:categories].each { |category|
+        cat = Category.where(name: category)
+        if cat.count >= 1
+          p category
+          art_cat = ArticleCategory.new(article_id: article.id, category_id: cat[0].id)
+          art_cat.save()
+        else
+          new_cat = Category.new(name: category)
+          if new_cat.save
+            art_cat = ArticleCategory.new(article_id: article.id, category_id: new_cat.id)
+            art_cat.save()
+          end
+        end
+
+      }
+      render json: { status: "SUCCESS" }
+    else
+      render json: { status: "ERROR", data: article.errors }
     end
 
-    def render_200
-        articles = Article.all
-        render json:{status: 200,articles: articles}
-    end
+  end
 
-    def render_400(form)
-        render json:{status: 400,error_params: form.errors}
-    end
-
-    def offli 
-    end
-
-    def create
-        puts 'create'
-        render json: {}
-    end
-
-    def show
-        puts 'show'
-        render json: {}
-    end
+  def show
+    puts 'show'
+    render json: {}
+  end
 end
 
