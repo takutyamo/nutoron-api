@@ -1,8 +1,13 @@
 class ArticlesController < ApplicationController
 
   def index
-    @articles = Article.all
-    render json: @articles
+    puts params[:page]
+    validator = PageNationValidator.new(params[:page],params[:limit])
+    #valid?はオブジェクトにエラーがないか真偽値で返す
+    validator.valid?
+    #binding.pry
+    @articles = Article.all.limit(params[:limit].to_i).offset((params[:page].to_i-1)*params[:limit].to_i)
+    render json: {articles:@articles}
   end
 
   def create

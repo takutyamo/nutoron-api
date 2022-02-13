@@ -14,10 +14,10 @@ include ActiveModel::Model
 
     private
     def limit_is_nil
-        errors.add :base,'limitでエラー'
+       # errors.add :base,'limitでエラー'
     end
 
     def page_is_nil
-        errors.add :base,'pageでエラー'
+       # errors.add :base,'pageでエラー'
     end
 end
